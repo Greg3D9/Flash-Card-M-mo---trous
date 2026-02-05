@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Stage - Espacement Équilibré</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            display: flex; flex-direction: column; align-items: center; 
+            background-color: #f0f2f5; min-height: 100vh; margin: 0; padding: 20px; 
+        }
+
+        .card-container { 
+            width: 95%; max-width: 900px; background: white; border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1); padding: 30px;
+            border: 3px solid #6e8efb; display: flex; flex-direction: column;
+        }
+
+        h3 { color: #6e8efb; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; margin-top: 0; }
+
+        .word-bank {
+            background: #eef2ff; padding: 20px; border-radius: 12px;
+            margin-bottom: 20px; border: 2px dashed #6e8efb;
+            display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+            min-height: 80px;
+        }
+
+        .word-item {
+            background: #6e8efb; color: white; padding: 6px 14px;
+            border-radius: 6px; font-weight: bold; cursor: grab;
+            user-select: none; transition: background-color 0.3s, transform 0.2s;
+            display: inline-block; font-size: 1rem;
+        }
+
+        .word-item.is-correct { background-color: #22c55e !important; box-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
+        .word-item.is-incorrect { background-color: #ef4444 !important; animation: shake 0.4s; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .quiz-content { font-size: 1.35rem; line-height: 2.8; color: #333; margin: 20px 0; }
+
+        .drop-zone {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 120px; min-height: 38px; border-bottom: 3px solid #cbd5e1;
+            margin: 0 8px; vertical-align: middle; background: #f8fafc;
+            border-radius: 4px 4px 0 0;
+        }
+        .drop-zone.over { background: #dbeafe; border-bottom-color: #3b82f6; }
+
+        .controls { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        button { 
+            padding: 12px 20px; border: none; border-radius: 8px; 
+            cursor: pointer; font-weight: bold; transition: 0.2s;
+        }
+        .btn-nav { background: #333; color: white; }
+        .btn-validate { background: #1e40af; color: white; flex-grow: 1; font-size: 1.1rem; }
+        .btn-audio { background: #a777e3; color: white; }
+        button:hover { opacity: 0.8; transform: translateY(-2px); }
+
+        .counter { margin-top: 15px; font-weight: bold; color: #666; }
+    </style>
+</head>
+<body>
+
+    <h2>🎓 Révision : 1 mot tous les 3 mots environ</h2>
+
+    <div class="card-container">
+        <h3 id="part-title">Chargement...</h3>
+        
+        <div class="word-bank" id="word-bank" ondrop="dropToBank(event)" ondragover="allowDrop(event)" ondragleave="clearDropStyle(event)">
+            </div>
+
+        <div class="quiz-content" id="quiz-text">
+            </div>
+
+        <div class="controls">
+            <button class="btn-nav" onclick="changePart(-1)">⬅️ Précédent</button>
+            <button class="btn-validate" onclick="validate()">✅ Valider les rectangles</button>
+            <button class="btn-audio" onclick="speakFull()">🔊 Écouter l'aide</button>
+            <button class="btn-nav" onclick="changePart(1)">Suivant ➡️</button>
+        </div>
+    </div>
+
+    <div class="counter" id="counter">Partie 1 / 11</div>
+
+    <script>
+        const data = [
+            { t: "Partie 1 – Introduction", content: "Today, I am going to present my internship, a technical document, and two articles. This presentation is about my professional experience and what I learned about mechanical design and vehicle safety." },
+            { t: "Partie 2 – The company", content: "I did my internship in a mechanical design company that works on vehicle components and systems. During my internship, I discovered how an industrial company is organised and how different departments work together. I observed engineers and learned how projects, safety, and quality are managed." },
+            { t: "Partie 3 – What I learned", content: "I observed mechanical components, technical drawings, and manufacturing constraints. Engineers must consider material strength, thermal constraints, maintenance, and safety. This internship showed me that braking systems are essential for vehicle safety and performance." },
+            { t: "Partie 4 – Technical document", content: "The technical document I studied is called Advantages of TELMA Retarders. Telma produces electromagnetic retarders for heavy vehicles. This document explains how retarders improve braking safety, efficiency, and reduce environmental impact." },
+            { t: "Partie 5 – What is a retarder", content: "A retarder helps a vehicle slow down without using the main braking system. It works with a magnetic field and creates braking force without friction. As a result, brakes last longer and are safer, especially for trucks and buses." },
+            { t: "Partie 6 – Technical results", content: "Telma retarders stabilise speed and reduce stopping distance. They prevent brake overheating and remain effective in many driving conditions. They also reduce friction and particle emissions." },
+            { t: "Partie 7 – Article 1", content: "The first article is called Braking to avoid pollution. It explains that brake dust is harmful to health. Electric vehicles reduce brake wear thanks to regenerative braking. The European Union will soon limit brake emissions." },
+            { t: "Partie 8 – Article 2", content: "The second article is called Will new greener brake pads be more expensive?. Eco-friendly brake pads use new materials without harmful metals. They reduce pollution, noise, and brake wear." },
+            { t: "Partie 9 – Link with internship", content: "These documents helped me better understand what I observed during my internship. They show that engineers must combine safety, performance, and environmental constraints in mechanical design." },
+            { t: "Partie 10 – Conclusion", content: "To conclude, my internship and these documents show the importance of mechanical design. Mechanical design improves vehicle safety, performance, and durability while reducing environmental impact. Telma retarders and eco-friendly brakes are good examples of efficient and responsible solutions." },
+            { t: "Partie 11 – Ending", content: "Thank you for your attention." }
+        ];
+
+        let currentIdx = 0;
+
+        function initQuiz() {
+            window.speechSynthesis.cancel();
+            const part = data[currentIdx];
+            document.getElementById('part-title').innerText = part.t;
+            document.getElementById('counter').innerText = `Partie ${currentIdx + 1} / ${data.length}`;
+            
+            const words = part.content.split(' ');
+            let selectedIndices = [];
+            
+            // On parcourt les mots avec un saut intelligent
+            for (let i = 0; i < words.length; i++) {
+                let clean = words[i].replace(/[.,]/g,"");
+                
+                // Conditions : 
+                // 1. Le mot doit être assez long (>4 lettres)
+                // 2. Il doit y avoir au moins 2 mots visibles de distance avec le dernier trou
+                if (clean.length > 4) {
+                    let lastSelected = selectedIndices.length > 0 ? selectedIndices[selectedIndices.length - 1] : -5;
+                    
+                    if (i - lastSelected > 2) { // Minimum 2 mots d'écart
+                        if (Math.random() > 0.3) { // Un peu de hasard
+                            selectedIndices.push(i);
+                        }
+                    }
+                }
+                if (selectedIndices.length >= 7) break; 
+            }
+            
+            let displayHTML = "";
+            let bankWords = [];
+
+            words.forEach((word, index) => {
+                let cleanWord = word.replace(/[.,?!”“]/g,"");
+                if (selectedIndices.includes(index)) {
+                    displayHTML += `<span class="drop-zone" data-answer="${cleanWord.toLowerCase()}" ondrop="dropToZone(event)" ondragover="allowDrop(event)" ondragleave="clearDropStyle(event)"></span>${word.includes('.') ? '.' : ''}${word.includes(',') ? ',' : ''} `;
+                    bankWords.push(cleanWord);
+                } else {
+                    displayHTML += word + " ";
+                }
+            });
+
+            document.getElementById('quiz-text').innerHTML = displayHTML;
+            const bank = document.getElementById('word-bank');
+            bank.innerHTML = "";
+            bankWords.sort(() => 0.5 - Math.random()).forEach((w, i) => {
+                const span = document.createElement('span');
+                span.className = 'word-item';
+                span.innerText = w;
+                span.id = "word-" + i;
+                span.draggable = true;
+                span.ondragstart = (e) => {
+                    e.dataTransfer.setData("text", e.target.id);
+                    e.target.classList.remove('is-correct', 'is-incorrect');
+                };
+                bank.appendChild(span);
+            });
+        }
+
+        // --- Fonctions Techniques Drag & Drop ---
+        function allowDrop(e) { e.preventDefault(); if (e.target.classList.contains('drop-zone') || e.target.id === 'word-bank') e.target.classList.add('over'); }
+        function clearDropStyle(e) { e.target.classList.remove('over'); }
+        
+        function dropToZone(e) {
+            e.preventDefault(); e.target.classList.remove('over');
+            const dataId = e.dataTransfer.getData("text");
+            const draggedElement = document.getElementById(dataId);
+            let targetZone = e.target;
+            if (targetZone.classList.contains('word-item')) targetZone = targetZone.parentNode;
+            if (targetZone.classList.contains('drop-zone') && targetZone.children.length === 0) {
+                targetZone.appendChild(draggedElement);
+                draggedElement.classList.remove('is-correct', 'is-incorrect');
+            }
+        }
+
+        function dropToBank(e) {
+            e.preventDefault(); e.target.classList.remove('over');
+            const dataId = e.dataTransfer.getData("text");
+            document.getElementById('word-bank').appendChild(document.getElementById(dataId));
+            document.getElementById(dataId).classList.remove('is-correct', 'is-incorrect');
+        }
+
+        function validate() {
+            const zones = document.querySelectorAll('.drop-zone');
+            zones.forEach(zone => {
+                if (zone.children.length > 0) {
+                    const wordItem = zone.children[0];
+                    const userWord = wordItem.innerText.trim().toLowerCase();
+                    const correctWord = zone.getAttribute('data-answer');
+                    wordItem.classList.remove('is-correct', 'is-incorrect');
+                    if (userWord === correctWord) wordItem.classList.add('is-correct');
+                    else wordItem.classList.add('is-incorrect');
+                }
+            });
+        }
+
+        function changePart(dir) {
+            currentIdx = (currentIdx + dir + data.length) % data.length;
+            initQuiz();
+        }
+
+        function speakFull() {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(data[currentIdx].content);
+            utterance.lang = 'en-US'; utterance.rate = 0.8;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>
