@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mastery Internship - MARINI Edition</title>
+    <title>Mastery Internship - VS Code Optimized</title>
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -24,6 +24,7 @@
             transition: all 0.5s ease;
         }
 
+        /* --- HEADER & SWITCH --- */
         .top-header {
             width: 100%; max-width: 900px;
             display: flex; justify-content: space-between; align-items: center;
@@ -34,12 +35,14 @@
         }
 
         .logo { 
-            font-weight: 800; font-size: 1.2rem; 
+            font-weight: 800; 
+            font-size: 1.2rem; 
             background: var(--primary-gradient); 
+            /* Correction Visual Studio Code & Compatibilité */
             background-clip: text;
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent;
-            color: transparent;
+            color: transparent; /* Fallback si background-clip ne charge pas */
         }
 
         .switch-container { display: flex; align-items: center; gap: 10px; }
@@ -50,6 +53,7 @@
         input:checked + .slider { background: var(--iphone-green); }
         input:checked + .slider:before { transform: translateX(22px); }
 
+        /* --- CONTENEUR --- */
         .card-container { 
             width: 95%; max-width: 850px; background: white; border-radius: 30px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.1); padding: 40px;
@@ -62,10 +66,11 @@
             background: var(--primary-gradient);
         }
 
+        /* --- BANQUE DE MOTS --- */
         .word-bank {
             background: #f8faff; padding: 25px; border-radius: 20px;
             margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 12px;
-            justify-content: center; border: 2px dashed #e0e6ed; min-height: 50px;
+            justify-content: center; border: 2px dashed #e0e6ed;
         }
 
         .word-item {
@@ -78,13 +83,13 @@
         .word-item.selected { background: #4834d4; color: white; }
         .word-item.used { opacity: 0.2; pointer-events: none; }
 
+        /* --- TEXTE --- */
         .quiz-content { font-size: 1.4rem; line-height: 2.6; color: #2d3436; margin: 20px 0; }
         .drop-zone {
             display: inline-flex; align-items: center; justify-content: center;
             min-width: 130px; min-height: 42px; border-radius: 10px;
             background: #f1f2f6; border: 2px solid #dfe4ea;
             margin: 0 6px; vertical-align: middle; transition: all 0.3s;
-            cursor: pointer;
         }
         .drop-zone.filled { background: white; border-color: #6c5ce7; color: #6c5ce7; font-weight: 800; }
         .is-correct { background: #ebfaef !important; border-color: #2ecc71 !important; color: #27ae60 !important; }
@@ -92,7 +97,9 @@
 
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
+        /* --- CONTROLES --- */
         .controls { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
+        
         .main-btn { 
             background: var(--primary-gradient); color: white; 
             padding: 18px; border: none; border-radius: 18px; font-weight: 800;
@@ -126,7 +133,7 @@
 <body>
 
     <div class="top-header">
-        <div class="logo">🏭 MARINI Pro-App</div>
+        <div class="logo">🚀 Pro-Internship</div>
         <div class="switch-container">
             <span style="font-size: 0.75rem; font-weight: 700; color: #636e72;">MODE IPHONE</span>
             <label class="switch">
@@ -137,7 +144,7 @@
     </div>
 
     <div class="card-container">
-        <div id="part-label" style="color: #a29bfe; font-weight: 800; letter-spacing: 1px; margin-bottom: 5px; font-size: 0.8rem;">PARTIE 01</div>
+        <div id="part-label" style="color: #a29bfe; font-weight: 800; letter-spacing: 1px; margin-bottom: 5px; font-size: 0.8rem;">CHAPTER 01</div>
         <h3 id="part-title" style="margin-top:0; font-size: 1.6rem; color: #2d3436;">Introduction</h3>
         
         <div class="word-bank" id="word-bank" ondrop="dropToBank(event)" ondragover="allowDrop(event)"></div>
@@ -160,13 +167,16 @@
 
     <script>
         const data = [
-            { t: "Introduction", content: "I did a six-week internship at MARINI, a small-to-medium-sized company located in Livry-Gargan. The company was founded in 1975 and specializes in the manufacture of custom metal parts for elevator cabins." },
-            { t: "Internship activities", content: "During my internship, I observed and assisted my colleagues in their daily tasks. I participated in several stages of manufacturing, such as laser cutting, bending, tapping, and assembly. I carried out different tasks independently or in collaboration with technicians, for example assembling safety system kits and using bending machines." },
-            { t: "What I learned", content: "This internship helped me understand how a manufacturing company works. However, I also faced some difficulties, such as lack of time and too many assignments. I had to be organized, make decisions, and find solutions to avoid mistakes." },
-            { t: "Technical report", content: "The first document is a technical report by Marini, a French company based in Livry-Gargan. It describes a centering kit used in elevator cabins. The document explains its components, technical characteristics, assembly, and safety features. Its purpose is to ensure the correct and safe use of the equipment." },
-            { t: "Industrial innovation", content: "The second document is a press article published in 2013 by David Szondy. It explains industrial innovation at Ford in the United States and presents Ford's Freeform manufacturing technology. This technology allows prototypes to be created directly from CAD files instead of using traditional methods, resulting in time and cost savings." },
-            { t: "Sheet metal fabrication", content: "The last document is a specialized press article published in 2019 by Guest Post. It presents sheet metal fabrication as a manufacturing process. This process is used to manufacture thin metal parts by cutting and bending sheet metal. It is cost-effective and suitable for prototypes and finished products." },
-            { t: "Link with internship", content: "These documents are linked to my internship because they relate to manufacturing, innovation, and safety. They helped me better understand industrial processes and the importance of technical documentation." },
+            { t: "Introduction", content: "Today, I am going to present my internship, a technical document, and two articles. This presentation is about my professional experience and what I learned about mechanical design and vehicle safety." },
+            { t: "The company", content: "I did my internship in a mechanical design company that works on vehicle components and systems. During my internship, I discovered how an industrial company is organised and how different departments work together. I observed engineers and learned how projects, safety, and quality are managed." },
+            { t: "What I learned", content: "I observed mechanical components, technical drawings, and manufacturing constraints. Engineers must consider material strength, thermal constraints, maintenance, and safety. This internship showed me that braking systems are essential for vehicle safety and performance." },
+            { t: "Technical document", content: "The technical document I studied is called Advantages of TELMA Retarders. Telma produces electromagnetic retarders for heavy vehicles. This document explains how retarders improve braking safety, efficiency, and reduce environmental impact." },
+            { t: "What is a retarder", content: "A retarder helps a vehicle slow down without using the main braking system. It works with a magnetic field and creates braking force without friction. As a result, brakes last longer and are safer, especially for trucks and buses." },
+            { t: "Technical results", content: "Telma retarders stabilise speed and reduce stopping distance. They prevent brake overheating and remain effective in many driving conditions. They also reduce friction and particle emissions." },
+            { t: "Article 1", content: "The first article is called Braking to avoid pollution. It explains that brake dust is harmful to health. Electric vehicles reduce brake wear thanks to regenerative braking. The European Union will soon limit brake emissions." },
+            { t: "Article 2", content: "The second article is called Will new greener brake pads be more expensive?. Eco-friendly brake pads use new materials without harmful metals. They reduce pollution, noise, and brake wear." },
+            { t: "Link with internship", content: "These documents helped me better understand what I observed during my internship. They show that engineers must combine safety, performance, and environmental constraints in mechanical design." },
+            { t: "Conclusion", content: "To conclude, my internship and these documents show the importance of mechanical design. Mechanical design improves vehicle safety, performance, and durability while reducing environmental impact. Telma retarders and eco-friendly brakes are good examples of efficient and responsible solutions." },
             { t: "Ending", content: "Thank you for your attention." }
         ];
 
@@ -195,19 +205,19 @@
             selectedWordElement = null;
             const part = data[currentIdx];
             document.getElementById('part-title').innerText = part.t;
-            document.getElementById('part-label').innerText = `PARTIE ${String(currentIdx + 1).padStart(2, '0')}`;
+            document.getElementById('part-label').innerText = `CHAPTER ${String(currentIdx + 1).padStart(2, '0')}`;
             
             const words = part.content.split(' ');
             let selectedIndices = [];
             for (let i = 0; i < words.length; i++) {
                 let clean = words[i].replace(/[.,]/g,"");
-                if (clean.length > 5) {
+                if (clean.length > 4) {
                     let lastSelected = selectedIndices.length > 0 ? selectedIndices[selectedIndices.length - 1] : -5;
-                    if (i - lastSelected > 3) {
-                        if (Math.random() > 0.4) selectedIndices.push(i);
+                    if (i - lastSelected > 2) {
+                        if (Math.random() > 0.3) selectedIndices.push(i);
                     }
                 }
-                if (selectedIndices.length >= 6) break;
+                if (selectedIndices.length >= 7) break;
             }
             
             let displayHTML = "";
@@ -244,76 +254,50 @@
         }
 
         function handleZoneClick(zone) {
-            // Fonctionnalité pour retirer un mot (Mode Mobile OU Mode Ordinateur)
-            if (zone.innerText !== "" || zone.children.length > 0) {
-                const wordEl = zone.querySelector('.word-item') || { innerText: zone.innerText };
-                const textToFind = wordEl.innerText;
-                
-                // Remettre le mot disponible dans la banque
-                document.querySelectorAll('.word-item').forEach(w => {
-                    if (w.innerText === textToFind) w.classList.remove('used');
-                });
-
-                // Vider la zone
-                zone.innerHTML = "";
-                zone.innerText = "";
-                zone.className = "drop-zone";
-                return;
-            }
-
-            // Placement du mot en mode Mobile
-            if (isMobileMode && selectedWordText) {
-                zone.innerText = selectedWordText;
-                zone.classList.add('filled');
-                selectedWordElement.classList.add('used');
-                selectedWordElement.classList.remove('selected');
-                selectedWordElement = null;
-                selectedWordText = null;
+            if (!isMobileMode) return;
+            if (selectedWordText) {
+                if (zone.innerText !== "") {
+                    const old = zone.innerText;
+                    document.querySelectorAll('.word-item').forEach(w => { if(w.innerText === old) w.classList.remove('used'); });
+                }
+                zone.innerText = selectedWordText; zone.classList.add('filled');
+                selectedWordElement.classList.add('used'); selectedWordElement.classList.remove('selected');
+                selectedWordElement = null; selectedWordText = null;
+            } else if (zone.innerText !== "") {
+                const old = zone.innerText;
+                document.querySelectorAll('.word-item').forEach(w => { if(w.innerText === old) w.classList.remove('used'); });
+                zone.innerText = ""; zone.classList.remove('filled');
             }
         }
 
         function allowDrop(e) { e.preventDefault(); }
-
         function dropToZone(e) {
-            e.preventDefault();
-            if (isMobileMode) return;
+            e.preventDefault(); if (isMobileMode) return;
             const dataId = e.dataTransfer.getData("text");
             const dragged = document.getElementById(dataId);
-            const zone = e.target.closest('.drop-zone');
-            
-            if (zone && zone.innerHTML === "") {
-                zone.appendChild(dragged);
-                zone.classList.add('filled');
+            if (e.target.classList.contains('drop-zone') && e.target.children.length === 0) {
+                e.target.appendChild(dragged); e.target.classList.add('filled');
             }
         }
-
         function dropToBank(e) {
-            e.preventDefault();
+            e.preventDefault(); if (isMobileMode) return;
             const dataId = e.dataTransfer.getData("text");
-            const dragged = document.getElementById(dataId);
-            const bank = document.getElementById('word-bank');
-            
-            if (dragged.parentNode.classList.contains('drop-zone')) {
-                dragged.parentNode.classList.remove('filled', 'is-correct', 'is-incorrect');
-            }
-            bank.appendChild(dragged);
-            dragged.classList.remove('used');
+            const el = document.getElementById(dataId);
+            if(el.parentNode.classList.contains('drop-zone')) el.parentNode.classList.remove('filled');
+            document.getElementById('word-bank').appendChild(el);
         }
 
         function validate() {
             document.querySelectorAll('.drop-zone').forEach(zone => {
-                const text = zone.innerText.trim().toLowerCase();
+                const text = zone.innerText || (zone.children[0] ? zone.children[0].innerText : "");
                 if (text !== "") {
-                    const isOk = text === zone.getAttribute('data-answer');
+                    const isOk = text.trim().toLowerCase() === zone.getAttribute('data-answer');
                     zone.className = `drop-zone filled ${isOk ? 'is-correct' : 'is-incorrect'}`;
                 }
             });
         }
 
-        function changePart(dir) { 
-            currentIdx = (currentIdx + dir + data.length) % data.length; 
-            initQuiz(); 
-        }
+        function changePart(dir) { currentIdx = (currentIdx + dir + data.length) % data.length; initQuiz(); }
 
         function speakFull() {
             window.speechSynthesis.cancel();
